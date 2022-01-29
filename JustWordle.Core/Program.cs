@@ -84,7 +84,7 @@ bool Retry()
     }
     else if (key == 'n')
     {
-        Console.WriteLine("OK, you have a great day");
+        Console.WriteLine("\nOK, you have a great day");
         return true;
     }
     else
