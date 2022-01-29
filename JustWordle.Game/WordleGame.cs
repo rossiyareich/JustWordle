@@ -8,7 +8,7 @@ public class WordleGame
         CorrectWord = correctWord;
     }
 
-    public int GameStatus => GuessedWords.Count >= 6 ? 1 : GuessedWords.Contains(CorrectWord) ? 2 : 0;
+    public int GameStatus => GuessedWords.Count > 6 ? 1 : GuessedWords.Contains(CorrectWord) ? 2 : 0;
     public string CorrectWord { get; }
     public List<string> GuessedWords { get; }
     public int CurrentGuessCount => GuessedWords.Count;
