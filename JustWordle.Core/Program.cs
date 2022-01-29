@@ -4,7 +4,7 @@ using static JustWordle.Core.WordLoader;
 Load(@"wordle-answers-alphabetical.txt");
 
 Random rng = new();
-WordleHint wordleHint = new(WordList);
+WordleHint wordleHint;
 string lastValidPrediction;
 string correctWord;
 WordleGame wordleGame;
@@ -19,6 +19,7 @@ void InitializeGame()
     correctWord = WordList[rng.Next(0, WordList.Length)];
     wordleGame = new WordleGame(correctWord);
     guessTable = new List<(char letter, int code)[]>(6);
+    wordleHint = new(WordList);
     lastValidPrediction = null;
 
     for (int i = 0; i < 6; i++)

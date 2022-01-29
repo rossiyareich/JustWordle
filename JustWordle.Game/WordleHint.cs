@@ -4,9 +4,16 @@ public class WordleHint
 {
     private readonly char[] _vowels = { 'A', 'E', 'I', 'O', 'U', 'Y' };
 
-    private readonly string[] _wordList;
+    string[] _wordList;
+    List<string> predictions;
 
-    public WordleHint(string[] wordList) => _wordList = wordList;
+    List<(char x, int pos)> greenExceptions = new();
+
+    public WordleHint(string[] wordList)
+    {
+        _wordList = wordList;
+        predictions = _wordList.ToList();
+    }
 
     public string GetPrediction((char letter, int code)[] result, IEnumerable<string> exception)
     {
@@ -15,31 +22,30 @@ public class WordleHint
             return null;
         }
 
-        IEnumerable<string> exclusive = _wordList.Where(x => !exception.Contains(x));
-        List<string> predictions = exclusive.ToList();
-        List<(char x, int pos)> greenExceptions = new();
+        predictions.RemoveAll(exception.Contains);
         for (int i = 0; i < result.Length; i++)
         {
             if (result[i].code == 0)
             {
                 predictions.RemoveAll(x =>
                     x.Contains(result[i].letter) &&
-                    greenExceptions.All(y => y.pos != i && y.x != result[i].letter));
+                    !greenExceptions.Contains((x[i], i)));
             }
             else if (result[i].code == 1)
             {
                 predictions.RemoveAll(x =>
                     !x.Contains(result[i].letter) ||
-                    x.Select((y, j) => (j, y)).Contains((i, result[i].letter)));
+                    x[i] == result[i].letter);
             }
             else if (result[i].code == 2)
             {
                 greenExceptions.Add((result[i].letter, i));
-                predictions.RemoveAll(x => !x.Select((y, j) => (j, y)).Contains((i, result[i].letter)));
+                predictions.RemoveAll(x => x[i] != result[i].letter);
             }
         }
 
-        return predictions.OrderBy(x => x.Count(_vowels.Contains))?.LastOrDefault() ??
-               exclusive.ToArray()[new Random().Next(0, exclusive.Count())];
+        predictions = predictions.Count <= 0 ? _wordList.ToList() : predictions;
+        predictions.RemoveAll(exception.Contains);
+        return predictions.OrderBy(x => x.Count(_vowels.Contains))?.LastOrDefault();
     }
 }
