@@ -49,17 +49,20 @@ void OnQueryFinished((char letter, int code)[] @return, int gameStatus, int gues
             }
             break;
         case 1:
+            do
             {
                 InsertGrid(@return, guessedWordIndex);
                 Console.Write($"{whiteSpaces}You lost. The correct word was {correctWord}!  Continue? (y/n) ");
-                Retry();
-            }
+            } while (!Retry());
+
             break;
         case 2:
             {
-                InsertGrid(@return, guessedWordIndex);
-                Console.Write($"{whiteSpaces}You won in {guessedWordIndex + 1} tries! Continue? (y/n) ");
-                Retry();
+                do
+                {
+                    InsertGrid(@return, guessedWordIndex);
+                    Console.Write($"{whiteSpaces}You won in {guessedWordIndex + 1} tries! Continue? (y/n) ");
+                } while (!Retry());
             }
             break;
         default:
@@ -69,25 +72,25 @@ void OnQueryFinished((char letter, int code)[] @return, int gameStatus, int gues
     }
 }
 
-void Retry()
+bool Retry()
 {
-    while (true)
+    char key = char.ToLower(Console.ReadKey().KeyChar);
+    if (key == 'y')
     {
-        char key = char.ToLower((char)Console.Read());
-        if (key == 'y')
-        {
-            DeleteGame();
-            InitializeGame();
-            break;
-        }
-
-        if (key == 'n')
-        {
-            Console.WriteLine("OK, you have a great day");
-            break;
-        }
-
-        Console.WriteLine("Invalid input, try again.");
+        DeleteGame();
+        InitializeGame();
+        return true;
+    }
+    else if (key == 'n')
+    {
+        Console.WriteLine("OK, you have a great day");
+        return true;
+    }
+    else
+    {
+        Console.WriteLine("\nInvalid input, try again.");
+        Thread.Sleep(1000);
+        return false;
     }
 }
 
