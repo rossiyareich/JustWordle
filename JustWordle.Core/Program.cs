@@ -75,7 +75,11 @@ void OnQueryFinished((char letter, int code)[] @return, int gameStatus, int gues
 
 bool Retry()
 {
-    char key = char.ToLower(Console.ReadKey().KeyChar);
+    var raw = Console.ReadKey();
+    if (raw.Key == ConsoleKey.Enter)
+        return false;
+
+    char key = char.ToLower(raw.KeyChar);
     if (key == 'y')
     {
         DeleteGame();
